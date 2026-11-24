@@ -12,6 +12,11 @@ CFG = $(K)/usr/share/kvmd/configs.default
 
 override_dh_auto_test:
 
+# Python < 3.14 needs postponed annotations to import kvmd (see debian/py313-annotations.py).
+override_dh_auto_configure:
+	if python3 -c 'import sys; sys.exit(sys.version_info >= (3, 14))'; then python3 debian/py313-annotations.py kvmd; fi
+	dh_auto_configure
+
 override_dh_auto_install:
 	dh_auto_install --destdir=$(K)
 	install -Dm755 -t $(K)/usr/bin scripts/kvmd-bootconfig scripts/kvmd-gencert scripts/kvmd-certbot scripts/kvmd-update-switch

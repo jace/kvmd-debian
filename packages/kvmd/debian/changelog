@@ -1,7 +1,9 @@
-kvmd (4.238-0kvmd1) trixie; urgency=medium
+kvmd (4.238-0kvmd2) trixie; urgency=medium
 
   * Package upstream v4.238 for Debian 13 with Debian's Python 3.13
     (upstream's PKGBUILD declares 3.14, but the code runs on 3.13).
+  * On Python < 3.14, add "from __future__ import annotations" to every
+    module at build time: kvmd relies on 3.14's lazy annotations.
   * kvmd-otg: don't require the PiKVM kernel's CD-ROM inquiry string.
   * Services are installed but not enabled.
 

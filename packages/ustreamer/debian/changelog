@@ -1,0 +1,5 @@
+ustreamer (6.67-0kvmd1) trixie; urgency=medium
+
+  * Package upstream v6.67 for Debian 13, with systemd support only.
+
+ -- Kiran Jonnalagadda <jace@pobox.com>  Mon, 24 Nov 2026 12:45:00 +0530

@@ -1,0 +1,33 @@
+Source: ustreamer
+Section: video
+Priority: optional
+Maintainer: Kiran Jonnalagadda <jace@pobox.com>
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               pkgconf,
+               python3-all-dev,
+               python3-setuptools,
+               libbsd-dev,
+               libevent-dev,
+               libjpeg-dev,
+               libsystemd-dev
+Standards-Version: 4.7.0
+Homepage: https://github.com/pikvm/ustreamer
+Vcs-Browser: https://github.com/jace/kvmd-debian
+Rules-Requires-Root: no
+
+Package: ustreamer
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: lightweight MJPEG and H.264 video streamer for V4L2 devices
+ uStreamer streams video from a V4L2 capture device (such as an HDMI-to-CSI
+ bridge) over HTTP as MJPEG, and to shared-memory sinks used by PiKVM's kvmd.
+ This build has systemd support and no GPIO, DRM pass-through or Janus plugin.
+
+Package: python3-ustreamer
+Architecture: any
+Section: python
+Depends: ${python3:Depends}, ${shlibs:Depends}, ${misc:Depends}
+Description: Python module for reading uStreamer's shared-memory video sinks
+ The ustreamer module lets Python programs, such as PiKVM's kvmd, kvmd-vnc
+ and kvmd-media, read frames from a running uStreamer's memory sinks.

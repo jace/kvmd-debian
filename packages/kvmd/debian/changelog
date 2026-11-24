@@ -1,3 +1,9 @@
+kvmd (4.238-0kvmd4) trixie; urgency=medium
+
+  * Version bump only: 0kvmd3 was a local test build, never published.
+
+ -- Kiran Jonnalagadda <jace@pobox.com>  Mon, 24 Nov 2026 19:30:00 +0530
+
 kvmd (4.238-0kvmd2) trixie; urgency=medium
 
   * Package upstream v4.238 for Debian 13 with Debian's Python 3.13

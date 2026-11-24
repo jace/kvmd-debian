@@ -1,0 +1,15 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: kvmd
+Source: https://github.com/pikvm/kvmd
+
+Files: *
+Copyright: Maxim Devaev <mdevaev@gmail.com>
+License: GPL-3.0-or-later
+
+Files: debian/*
+Copyright: 2026 Kiran Jonnalagadda
+License: GPL-3.0-or-later
+
+License: GPL-3.0-or-later
+ On Debian systems, the full text of the GNU General Public License version 3
+ can be found in /usr/share/common-licenses/GPL-3.

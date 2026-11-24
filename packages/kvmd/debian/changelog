@@ -1,0 +1,8 @@
+kvmd (4.238-0kvmd1) trixie; urgency=medium
+
+  * Package upstream v4.238 for Debian 13 with Debian's Python 3.13
+    (upstream's PKGBUILD declares 3.14, but the code runs on 3.13).
+  * kvmd-otg: don't require the PiKVM kernel's CD-ROM inquiry string.
+  * Services are installed but not enabled.
+
+ -- Kiran Jonnalagadda <jace@pobox.com>  Mon, 24 Nov 2026 13:30:00 +0530

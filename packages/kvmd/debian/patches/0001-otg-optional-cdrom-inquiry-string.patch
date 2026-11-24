@@ -1,0 +1,20 @@
+Description: Don't require the PiKVM kernel's separate CD-ROM inquiry string
+ The lun.0/inquiry_string_cdrom attribute comes from a PiKVM kernel patch
+ (1101-pikvm-msd-inquiry-for-flash-and-cdrom) that Raspberry Pi's and
+ Debian's kernels don't carry, so kvmd-otg fails to set up virtual media on
+ them. Write it only where it exists; elsewhere the drive keeps one inquiry
+ string for both modes.
+Forwarded: not-needed
+Last-Update: 2026-11-24
+---
+--- a/kvmd/apps/otg/__init__.py	2026-11-24 12:43:18.442208000 +0530
++++ b/kvmd/apps/otg/__init__.py	2026-11-24 12:43:18.449971775 +0530
+@@ -337,7 +337,7 @@
+         _write(join(func_path, "lun.0/ro"), int(not rw))
+         _write(join(func_path, "lun.0/removable"), int(removable))
+         _write(join(func_path, "lun.0/nofua"), int(not fua))
+-        _write(join(func_path, "lun.0/inquiry_string_cdrom"), inquiry_string_cdrom)
++        _write(join(func_path, "lun.0/inquiry_string_cdrom"), inquiry_string_cdrom, optional=True)
+         _write(join(func_path, "lun.0/inquiry_string"), inquiry_string_flash)
+         if image_path:
+             _write(join(func_path, "lun.0/file"), image_path)

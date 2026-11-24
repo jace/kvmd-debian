@@ -1,0 +1,46 @@
+Source: kvmd
+Section: admin
+Priority: optional
+Maintainer: Kiran Jonnalagadda <jace@pobox.com>
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               python3-all,
+               python3-setuptools
+Standards-Version: 4.7.0
+Homepage: https://github.com/pikvm/kvmd
+Vcs-Browser: https://github.com/jace/kvmd-debian
+Rules-Requires-Root: no
+
+Package: kvmd
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends},
+         python3-aiofiles, python3-aiohttp, python3-async-lru, python3-bcrypt,
+         python3-dbus-next, python3-evdev, python3-libgpiod, python3-mako,
+         python3-netifaces, python3-passlib, python3-pil, python3-psutil,
+         python3-pygments, python3-pyotp, python3-pyudev, python3-qrcode,
+         python3-ruamel.yaml, python3-serial, python3-setproctitle,
+         python3-systemd, python3-usb, python3-xlib, python3-zstandard,
+         python3-ustreamer (>= 6.67), ustreamer (>= 6.67),
+         libxkbcommon0, nginx, v4l-utils, sudo, openssl, iproute2, systemd
+Suggests: python3-dbus, python3-hid, python3-ldap, python3-pam, python3-paramiko,
+          python3-pyrad, python3-serial-asyncio, python3-smbc, python3-spidev
+Description: PiKVM's KVM-over-IP daemon, web UI and VNC server
+ kvmd captures a target computer's screen through a video capture device and
+ drives its keyboard, mouse and virtual media through a USB gadget, served as
+ the PiKVM web UI (through its own nginx instance), a VNC server and an API.
+ .
+ Packaged for Debian 13 with Debian's own Python. Services are installed but
+ not enabled: enable or start the ones you need. Install a
+ kvmd-platform-* package for the board's udev rules and configuration.
+
+Package: kvmd-platform-v2-hdmi-rpi4
+Architecture: all
+Depends: kvmd (= ${binary:Version}), ${misc:Depends}
+Description: PiKVM platform configuration: Raspberry Pi 4 with a TC358743 HDMI-to-CSI bridge
+ The PiKVM "v2-hdmi" platform on a Raspberry Pi 4: udev rules for the unicam
+ capture device and USB gadget HID devices, kvmd's main.yaml, the kernel
+ modules to load, the sudo rule for the virtual-media remount helper, sysctl
+ settings and PiKVM's default TC358743 EDID.
+ .
+ The boot configuration (dtoverlay=tc358743 and dtoverlay=dwc2,dr_mode=peripheral
+ in /boot/firmware/config.txt) is left to the administrator.

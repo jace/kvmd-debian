@@ -1,0 +1,60 @@
+#!/usr/bin/make -f
+# Mirrors package_kvmd() and package_kvmd-platform-*() in upstream's PKGBUILD.
+export PYBUILD_NAME = kvmd
+PLATFORM = v2-hdmi
+BOARD = rpi4
+K = debian/kvmd
+P = debian/kvmd-platform-$(PLATFORM)-$(BOARD)
+CFG = $(K)/usr/share/kvmd/configs.default
+
+%:
+	dh $@ --with python3 --buildsystem=pybuild
+
+override_dh_auto_test:
+
+override_dh_auto_install:
+	dh_auto_install --destdir=$(K)
+	install -Dm755 -t $(K)/usr/bin scripts/kvmd-bootconfig scripts/kvmd-gencert scripts/kvmd-certbot scripts/kvmd-update-switch
+	install -Dm755 -t $(K)/usr/lib/kvmd scripts/kvmd-udev-flash-pico scripts/kvmd-ucamera-prepare
+	install -d $(K)/usr/lib/systemd/system
+	cp -rd configs/os/services -T $(K)/usr/lib/systemd/system
+	# a drop-in for systemd-networkd, which Raspberry Pi OS doesn't use
+	rm -rf $(K)/usr/lib/systemd/system/systemd-networkd-wait-online.service.d
+	install -DTm644 configs/os/sysusers.conf $(K)/usr/lib/sysusers.d/kvmd.conf
+	install -DTm644 configs/os/tmpfiles.conf $(K)/usr/lib/tmpfiles.d/kvmd.conf
+	install -d $(K)/usr/share/kvmd
+	cp -r firmware hid web extras contrib/keymaps $(K)/usr/share/kvmd/
+	find $(K)/usr/share/kvmd/web -name '*.pug' -delete
+	install -d $(CFG)
+	cp -r configs/* $(CFG)/
+	find $(K) -name .gitignore -delete
+	install -d $(K)/etc/kvmd/nginx/ssl $(K)/etc/kvmd/vnc/ssl $(K)/etc/kvmd/janus $(K)/etc/kvmd/override.d
+	install -m644 -t $(K)/etc/kvmd/nginx $(CFG)/nginx/*.conf*
+	install -m644 -t $(K)/etc/kvmd/janus $(CFG)/janus/*.jcfg
+	install -m644 -t $(K)/etc/kvmd $(CFG)/kvmd/*.yaml $(CFG)/kvmd/web.css
+	install -m600 -t $(K)/etc/kvmd $(CFG)/kvmd/*passwd $(CFG)/kvmd/*.secret
+	install -d $(K)/var/lib/kvmd/msd $(K)/var/lib/kvmd/pst
+	# platform package
+	install -DTm644 configs/os/sysctl.conf $(P)/usr/lib/sysctl.d/99-kvmd.conf
+	install -DTm644 configs/os/udev/common.rules $(P)/usr/lib/udev/rules.d/99-kvmd-common.rules
+	install -DTm644 configs/os/udev/$(PLATFORM)-$(BOARD).rules $(P)/usr/lib/udev/rules.d/99-kvmd.rules
+	install -DTm644 configs/kvmd/main/$(PLATFORM)-$(BOARD).yaml $(P)/usr/lib/kvmd/main.yaml
+	install -DTm644 configs/os/modules-load/$(PLATFORM).conf $(P)/usr/lib/modules-load.d/kvmd.conf
+	install -DTm440 configs/os/sudoers/$(PLATFORM) $(P)/etc/sudoers.d/99_kvmd
+	install -DTm644 configs/kvmd/edid/v2.hex $(P)/etc/kvmd/tc358743-edid.hex
+	ln -s tc358743-edid.hex $(P)/etc/kvmd/switch-edid.hex
+	printf 'PIKVM_MODEL=v2\nPIKVM_VIDEO=hdmi\nPIKVM_BOARD=$(BOARD)\n' > $(P)/usr/lib/kvmd/platform
+
+# Installed, not enabled or started: the administrator picks the services.
+override_dh_installsystemd:
+
+override_dh_fixperms:
+	dh_fixperms
+	find $(CFG) -type f -exec chmod 444 {} +
+	chmod 400 $(CFG)/kvmd/*passwd $(CFG)/kvmd/*.secret
+	chmod 750 $(CFG)/os/sudoers
+	chmod 400 $(CFG)/os/sudoers/*
+	chmod 600 $(K)/etc/kvmd/*passwd $(K)/etc/kvmd/*.secret
+	chmod 1775 $(K)/var/lib/kvmd/pst
+	chmod 440 $(P)/etc/sudoers.d/99_kvmd
+	chmod 444 $(P)/usr/lib/kvmd/platform
